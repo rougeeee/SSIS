@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Students Info{% endblock %}
+
+{% block content %}
+<!-- Button to show the form -->
+<button id="showFormBtn" class="btn btn-success" onclick="showForm()">Add New Student</button>
+
+<!-- Hidden form by default -->
+<form id="studentForm" method="POST" style="display: none; margin-top: 20px;">
+    <h3 align="center">New Student</h3>
+    <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter first name"/>
+    </div>
+    <div class="form-group">
+        <label for="lastName">Surname</label>
+        <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Enter Surname"/>
+    </div>
+    <div class="form-group">
+        <label for="year">Year Level</label>
+        <input type="text" class="form-control" id="year" name="year" placeholder="Enter year level e.g. 1st Year"/>
+    </div>
+    <div class="form-group">
+        <label for="gender">Gender</label>
+        <select class="form-control" id="gender" name="gender">
+            <option value="" disabled selected>Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="program">Course Code</label>
+        <input type="text" class="form-control" id="program" name="program" placeholder="Enter Course Code e.g. BSCS"/>
+    </div>
+    <br/>
+    <!-- Submit and Cancel buttons -->
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="button" class="btn btn-secondary" onclick="cancelForm()">Cancel</button>
+</form>
+
+<!-- JavaScript to show and hide the form -->
+<script>
+    // Function to show the form
+    function showForm() {
+        document.getElementById("studentForm").style.display = "block";  // Show the form
+        document.getElementById("showFormBtn").style.display = "none";   // Hide the "Add New Student" button
+    }
+
+    // Function to hide the form and show the "Add New Student" button
+    function cancelForm() {
+        document.getElementById("studentForm").reset();  // Reset the form (optional)
+        document.getElementById("studentForm").style.display = "none";   // Hide the form
+        document.getElementById("showFormBtn").style.display = "block";  // Show the "Add New Student" button again
+    }
+</script>
+{% endblock %}

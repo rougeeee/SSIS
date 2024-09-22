@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Students Info{% endblock %}
+
+{% block content %}
+<!-- Button to show the form -->
+<button id="showFormBtn" class="btn btn-success" onclick="showForm()">Add New College</button>
+
+<!-- Hidden form by default -->
+<form id="collegeForm" method="POST" style="display: none; margin-top: 20px;">
+    <h3 align="center">New College</h3>
+    <div class="form-group">
+        <label for="collegeName">College Name</label>
+        <input type="text" class="form-control" id="collegeName" name="collegeName" placeholder="Enter college name"/>
+    </div>
+    <div class="form-group">
+        <label for="collegeCode">College Code</label>
+        <input type="text" class="form-control" id="collegeCode" name="collegeCode" placeholder="Enter college code"/>
+    </div>
+    <br/>
+    <!-- Submit and Cancel buttons -->
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="button" class="btn btn-secondary" onclick="cancelForm()">Cancel</button>
+</form>
+
+<!-- JavaScript to show and hide the form -->
+<script>
+    // Function to show the form
+    function showForm() {
+        document.getElementById("collegeForm").style.display = "block";  // Show the form
+        document.getElementById("showFormBtn").style.display = "none";   // Hide the "Add New Student" button
+    }
+
+    // Function to hide the form and show the "Add New Student" button
+    function cancelForm() {
+        document.getElementById("collegeForm").reset();  // Reset the form (optional)
+        document.getElementById("collegeForm").style.display = "none";   // Hide the form
+        document.getElementById("showFormBtn").style.display = "block";  // Show the "Add New Student" button again
+    }
+</script>
+{% endblock %}
