@@ -1,0 +1,21 @@
+CREATE TABLE college (
+    code VARCHAR(10) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE program (
+    code VARCHAR(10) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    college_code VARCHAR(10),
+    FOREIGN KEY (college_code) REFERENCES college(code)
+);
+
+CREATE TABLE student (
+    id VARCHAR(10) PRIMARY KEY,
+    firstname VARCHAR(50) NOT NULL,
+    lastname VARCHAR(50) NOT NULL,
+    course VARCHAR(10),
+    year INT CHECK (year >= 1 AND year <= 4), 
+    gender CHAR(1) CHECK (gender IN ('M', 'F', 'O')), 
+    FOREIGN KEY (course) REFERENCES program(code)
+);

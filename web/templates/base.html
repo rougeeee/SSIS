@@ -16,6 +16,13 @@
       crossorigin="anonymous"
     />
 
+    <style>
+      .nav-link {
+          font-size: 1.25rem; /* Adjust size as needed */
+          font-weight: bold; /* Makes the text bold */
+      }
+  </style>
+
     <title>{% block title %}Home{% endblock %}</title>
     </head>
     <body>
@@ -24,11 +31,15 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbar">
-              <div class="navbar-nav">
-                <a class="nav-item nav-link" id="students" href="/">Students</a>
-                <a class="nav-item nav-link" id="school" href="/college/">Colleges</a>
-                <a class="nav-item nav-link" id="course" href="/programs">Programs</a>
+              <div class="navbar-nav w-100 justify-content-between">
+                <a class="nav-item nav-link flex-fill text-center {{ 'active' if request.path == '/' else '' }}" id="students" href="/">Students</a>
+                <a class="nav-item nav-link flex-fill text-center {{ 'active' if request.path == '/college/' else '' }}" id="school" href="/college/">Colleges</a>
+               <!-- <a class="nav-item nav-link" id="course" href="/programs">Programs</a>-->
               </div>
+              <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+              </form>
             </div>
         </nav>
         
