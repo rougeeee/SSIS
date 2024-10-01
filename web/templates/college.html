@@ -2,6 +2,24 @@
 {% block title %}Students Info{% endblock %}
 
 {% block content %}
+<h3 id="colListTable" align="center">Colleges List</h3>
+<table id="collegeTable" class="table">
+    <thead>
+        <tr>
+            <th>College Code</th>
+            <th>College Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for college in colleges %}
+        <tr>
+            <td>{{ college.code }}</td>
+            <td>{{ college.name }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 <br/>
 <!-- Button to show the form -->
 <button id="showFormBtn" class="btn btn-success" onclick="showForm()">Add New College</button>
@@ -27,15 +45,15 @@
 <script>
     // Function to show the form
     function showForm() {
-        document.getElementById("collegeForm").style.display = "block";  // Show the form
-        document.getElementById("showFormBtn").style.display = "none";   // Hide the "Add New Student" button
+        document.getElementById("collegeForm").style.display = "block";  
+        document.getElementById("showFormBtn").style.display = "none";   
     }
 
     // Function to hide the form and show the "Add New Student" button
     function cancelForm() {
-        document.getElementById("collegeForm").reset();  // Reset the form (optional)
-        document.getElementById("collegeForm").style.display = "none";   // Hide the form
-        document.getElementById("showFormBtn").style.display = "block";  // Show the "Add New Student" button again
+        document.getElementById("collegeForm").reset();  
+        document.getElementById("collegeForm").style.display = "none";   
+        document.getElementById("showFormBtn").style.display = "block";  
     }
 </script>
 {% endblock %}
