@@ -303,3 +303,44 @@ def delete_program(course_code):
         connection.close()
 
     return redirect(url_for('views.programs'))
+
+@views.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('query')
+    category = request.args.get('searchCategory')
+    
+    try:
+        connection = mysql.connector.connect(
+            host=current_app.config['MYSQL_HOST'],
+            user=current_app.config['MYSQL_USER'],
+            password=current_app.config['MYSQL_PASSWORD'],
+            database=current_app.config['MYSQL_DB']
+        )
+        cursor = connection.cursor(dictionary=True)
+
+        if category == 'students':
+            cursor.execute("SELECT * FROM student WHERE firstname LIKE %s OR lastname LIKE %s OR id LIKE %s OR course LIKE %s OR year LIKE %s OR gender LIKE %s", 
+                           ('%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%', '%' + query + '%'))
+            results = cursor.fetchall()
+            return render_template('students.html', students=results)  
+
+        elif category == 'programs':
+            cursor.execute("SELECT * FROM program WHERE code LIKE %s OR name LIKE %s OR college_code LIKE %s", 
+                           ('%' + query + '%', '%' + query + '%', '%' + query + '%'))
+            results = cursor.fetchall()
+            return render_template('programs.html', programs=results)  
+
+        elif category == 'colleges':
+            cursor.execute("SELECT * FROM college WHERE code LIKE %s OR name LIKE %s", 
+                           ('%' + query + '%', '%' + query + '%'))
+            results = cursor.fetchall()
+            return render_template('college.html', colleges=results)  
+
+    except mysql.connector.Error as err:
+        flash(f"Database error: {err}", category='error')
+
+    finally:
+        cursor.close()
+        connection.close()
+
+    return redirect('/')  # redirect to homepage or another page on failure

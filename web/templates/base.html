@@ -18,8 +18,8 @@
 
     <style>
       .nav-link {
-          font-size: 1.25rem; /* Adjust size as needed */
-          font-weight: bold; /* Makes the text bold */
+          font-size: 1.25rem; 
+          font-weight: bold; 
       }
   </style>
 
@@ -36,10 +36,19 @@
                 <a class="nav-item nav-link flex-fill text-center {{ 'active' if request.path == '/programs' else '' }}" id="course" href="/programs">Programs</a>
                 <a class="nav-item nav-link flex-fill text-center {{ 'active' if request.path == '/college/' else '' }}" id="school" href="/college/">Colleges</a>
               </div>
-              <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-              </form>
+              <form class="d-flex" role="search" method="GET" action="/search">
+                <div class="input-group">
+                    <select class="form-control" name="searchCategory">
+                        <option value="students">Students</option>
+                        <option value="programs">Programs</option>
+                        <option value="colleges">Colleges</option>
+                    </select>
+                    <input class="form-control me-2" type="search" name="query" placeholder="Search" aria-label="Search" required>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
             </div>
         </nav>
         
