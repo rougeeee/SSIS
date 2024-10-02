@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Students Info{% endblock %}
+{% block title %}Colleges Info{% endblock %}
 
 {% block content %}
 <h3 id="colListTable" align="center">Colleges List</h3>
@@ -8,6 +8,7 @@
         <tr>
             <th>College Code</th>
             <th>College Name</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -15,45 +16,67 @@
         <tr>
             <td>{{ college.code }}</td>
             <td>{{ college.name }}</td>
+            <td>
+                <button class="btn btn-outline-success" onclick="editCollege('{{ college.code }}', '{{ college.name }}')">Update</button>
+                <form action="{{ url_for('views.delete_college', college_code=college.code) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure?');">Delete</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
 <br/>
-<!-- Button to show the form -->
 <button id="showFormBtn" class="btn btn-success" onclick="showForm()">Add New College</button>
 
-<!-- Hidden form by default -->
-<form id="collegeForm" method="POST" style="display: none; margin-top: 20px;">
-    <h3 align="center">New College</h3>
-    <div class="form-group">
-        <label for="collegeName">College Name</label>
-        <input type="text" class="form-control" id="collegeName" name="collegeName" placeholder="Enter college name"/>
-    </div>
+<form id="collegeForm" method="POST" action="{{ url_for('views.college') }}" style="display: none; margin-top: 20px;">
+    <h3 align="center" id="formTitle">New College</h3>
+
     <div class="form-group">
         <label for="collegeCode">College Code</label>
-        <input type="text" class="form-control" id="collegeCode" name="collegeCode" placeholder="Enter college code"/>
+        <input type="text" class="form-control" id="collegeCode" name="collegeCode" placeholder="Enter college code" required />
     </div>
+
+    <div class="form-group">
+        <label for="collegeName">College Name</label>
+        <input type="text" class="form-control" id="collegeName" name="collegeName" placeholder="Enter college name" required />
+    </div>
+
+    <input type="hidden" id="action" name="action" value="add" />
+
     <br/>
-    <!-- Submit and Cancel buttons -->
     <button type="submit" class="btn btn-primary">Submit</button>
     <button type="button" class="btn btn-secondary" onclick="cancelForm()">Cancel</button>
 </form>
 
-<!-- JavaScript to show and hide the form -->
 <script>
-    // Function to show the form
     function showForm() {
         document.getElementById("collegeForm").style.display = "block";  
-        document.getElementById("showFormBtn").style.display = "none";   
+        document.getElementById("collegeTable").style.display = "none";
+        document.getElementById("showFormBtn").style.display = "none";
+        document.getElementById("formTitle").innerText = "New College"; 
+        document.getElementById("action").value = "add"; 
     }
 
-    // Function to hide the form and show the "Add New Student" button
+    function editCollege(code, name) {
+        document.getElementById("collegeForm").style.display = "block";  
+        document.getElementById("collegeTable").style.display = "none";
+        document.getElementById("showFormBtn").style.display = "none";
+
+        document.getElementById("collegeCode").value = code;
+        document.getElementById("collegeCode").readOnly = true;  
+        document.getElementById("collegeName").value = name;
+        document.getElementById("formTitle").innerText = "Edit College"; 
+        document.getElementById("action").value = "edit";  
+    }
+
     function cancelForm() {
-        document.getElementById("collegeForm").reset();  
+        document.getElementById("collegeForm").reset();
         document.getElementById("collegeForm").style.display = "none";   
+        document.getElementById("collegeTable").style.display = "table";
         document.getElementById("showFormBtn").style.display = "block";  
+        document.getElementById("collegeCode").readOnly = false;  
     }
 </script>
 {% endblock %}

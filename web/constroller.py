@@ -34,7 +34,6 @@ def students():
                 cursor = connection.cursor()
 
                 if action == "add":
-                    # Check if the ID already exists
                     cursor.execute("SELECT * FROM student WHERE id = %s", (student_id,))
                     existing_student = cursor.fetchone()
                     if existing_student:
@@ -61,7 +60,6 @@ def students():
                 cursor.close()
                 connection.close()
 
-    # Retrieve all students from the database to display
     try:
         connection = mysql.connector.connect(
             host=current_app.config['MYSQL_HOST'],
@@ -83,7 +81,6 @@ def students():
 
     return render_template('students.html', students=students)
 
-# Route to handle fetching student data for editing
 @views.route('/edit/<student_id>', methods=['GET'])
 def edit_student(student_id):
     try:
@@ -136,12 +133,158 @@ def delete_student(student_id):
 
     return redirect(url_for('views.students'))  # Redirect back to the student list
 
-# College route
 @views.route('/college/', methods=['GET', 'POST'])
-def school():   
-    return render_template('college.html')
+def college():
+    try:
+        connection = mysql.connector.connect(
+            host=current_app.config['MYSQL_HOST'],
+            user=current_app.config['MYSQL_USER'],
+            password=current_app.config['MYSQL_PASSWORD'],
+            database=current_app.config['MYSQL_DB']
+        )
+        cursor = connection.cursor(dictionary=True)
 
-# Programs route
+        if request.method == 'POST':
+            action = request.form.get('action')
+            college_code = request.form.get('collegeCode')
+            college_name = request.form.get('collegeName')
+
+            if len(college_code) == 0 or len(college_name) == 0:
+                flash('College code and name are required.', category='error')
+            else:
+                if action == 'add':
+                    try:
+                        query = "INSERT INTO college (code, name) VALUES (%s, %s)"
+                        cursor.execute(query, (college_code, college_name))
+                        connection.commit()
+                        flash('College added successfully!', category='success')
+                    except mysql.connector.Error as err:
+                        flash(f"Error: {err}", category='error')
+                elif action == 'edit':
+                    try:
+                        query = "UPDATE college SET name = %s WHERE code = %s"
+                        cursor.execute(query, (college_name, college_code))
+                        connection.commit()
+                        flash('College updated successfully!', category='success')
+                    except mysql.connector.Error as err:
+                        flash(f"Error: {err}", category='error')
+
+        cursor.execute("SELECT * FROM college")
+        colleges = cursor.fetchall()
+
+    except mysql.connector.Error as err:
+        flash(f"Error: {err}", category='error')
+        colleges = []
+
+    finally:
+        cursor.close()
+        connection.close()
+
+    return render_template('college.html', colleges=colleges)
+
+@views.route('/delete-college/<string:college_code>', methods=['POST'])
+def delete_college(college_code):
+    try:
+        connection = mysql.connector.connect(
+            host=current_app.config['MYSQL_HOST'],
+            user=current_app.config['MYSQL_USER'],
+            password=current_app.config['MYSQL_PASSWORD'],
+            database=current_app.config['MYSQL_DB']
+        )
+        cursor = connection.cursor()
+
+        delete_query = "DELETE FROM college WHERE code = %s"
+        cursor.execute(delete_query, (college_code,))
+
+        connection.commit()
+        flash('College and associated programs deleted successfully, students\' courses set to NULL.', category='success')
+
+    except mysql.connector.Error as err:
+        flash(f"Error: {err}", category='error')
+
+    finally:
+        cursor.close()
+        connection.close()
+
+    return redirect(url_for('views.college'))
+
 @views.route('/programs', methods=['GET', 'POST'])
-def course():
-    return render_template('programs.html')
+def programs():
+    if request.method == 'POST':
+        action = request.form.get('action')
+        course_code = request.form.get('courseCode')
+        course_name = request.form.get('courseName')
+        college_code = request.form.get('collegeCode')
+
+        try:
+            connection = mysql.connector.connect(
+                host=current_app.config['MYSQL_HOST'],
+                user=current_app.config['MYSQL_USER'],
+                password=current_app.config['MYSQL_PASSWORD'],
+                database=current_app.config['MYSQL_DB']
+            )
+            cursor = connection.cursor()
+
+            if action == 'add':
+                query = """INSERT INTO program (code, name, college_code) VALUES (%s, %s, %s)"""
+                cursor.execute(query, (course_code, course_name, college_code))
+                flash('Program added successfully.', category='success')
+
+            elif action == 'edit':
+                query = """UPDATE program SET name=%s, college_code=%s WHERE code=%s"""
+                cursor.execute(query, (course_name, college_code, course_code))
+                flash('Program updated successfully.', category='success')
+
+            connection.commit()
+
+        except mysql.connector.Error as err:
+            flash(f"Error: {err}", category='error')
+
+        finally:
+            cursor.close()
+            connection.close()
+
+    try:
+        connection = mysql.connector.connect(
+            host=current_app.config['MYSQL_HOST'],
+            user=current_app.config['MYSQL_USER'],
+            password=current_app.config['MYSQL_PASSWORD'],
+            database=current_app.config['MYSQL_DB']
+        )
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM program")
+        programs = cursor.fetchall()
+
+    except mysql.connector.Error as err:
+        flash(f"Error: {err}", category='error')
+        programs = []
+
+    finally:
+        cursor.close()
+        connection.close()
+
+    return render_template('programs.html', programs=programs)
+
+@views.route('/delete_program/<course_code>', methods=['POST'])
+def delete_program(course_code):
+    try:
+        connection = mysql.connector.connect(
+            host=current_app.config['MYSQL_HOST'],
+            user=current_app.config['MYSQL_USER'],
+            password=current_app.config['MYSQL_PASSWORD'],
+            database=current_app.config['MYSQL_DB']
+        )
+        cursor = connection.cursor()
+        query = """DELETE FROM program WHERE code=%s"""
+        cursor.execute(query, (course_code,))
+        connection.commit()
+        flash('Program deleted successfully.', category='success')
+
+    except mysql.connector.Error as err:
+        flash(f"Error: {err}", category='error')
+
+    finally:
+        cursor.close()
+        connection.close()
+
+    return redirect(url_for('views.programs'))
