@@ -50,6 +50,8 @@
         <input type="text" class="form-control" id="collegeCode" name="collegeCode" placeholder="Enter College Code" required />
     </div>
 
+    <input type="hidden" id="originalCourseCode" name="originalCourseCode" />
+
     <input type="hidden" id="action" name="action" value="add" />
 
     <br/>
@@ -64,20 +66,23 @@
         document.getElementById("showFormBtn").style.display = "none";
         document.getElementById("formTitle").innerText = "New Program"; 
         document.getElementById("action").value = "add"; 
+        document.getElementById("progListTitle").style.display = "none";
     }
 
     function editProgram(code, name, collegeCode) {
         document.getElementById("programForm").style.display = "block";  
         document.getElementById("programTable").style.display = "none";
         document.getElementById("showFormBtn").style.display = "none";
+        document.getElementById("progListTitle").style.display = "none";
 
         document.getElementById("courseCode").value = code;
-        document.getElementById("courseCode").readOnly = true;  
+        document.getElementById("courseCode").readOnly = false;  
         document.getElementById("courseName").value = name;
         document.getElementById("collegeCode").value = collegeCode;
 
         document.getElementById("formTitle").innerText = "Edit Program"; 
-        document.getElementById("action").value = "edit";  
+        document.getElementById("action").value = "edit"; 
+        document.getElementById("originalCourseCode").value = code; 
     }
 
     function cancelForm() {

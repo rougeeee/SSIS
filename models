@@ -8,6 +8,8 @@ CREATE TABLE program (
     name VARCHAR(100) NOT NULL,
     college_code VARCHAR(10),
     FOREIGN KEY (college_code) REFERENCES college(code)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 CREATE TABLE student (
@@ -18,4 +20,6 @@ CREATE TABLE student (
     year INT CHECK (year >= 1 AND year <= 4), 
     gender CHAR(1) CHECK (gender IN ('M', 'F', 'O')), 
     FOREIGN KEY (course) REFERENCES program(code)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );

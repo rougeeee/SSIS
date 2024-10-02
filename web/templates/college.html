@@ -35,13 +35,15 @@
 
     <div class="form-group">
         <label for="collegeCode">College Code</label>
-        <input type="text" class="form-control" id="collegeCode" name="collegeCode" placeholder="Enter college code" required />
+        <input type="text" class="form-control" id="collegeCode" name="collegeCode" placeholder="Enter college code" required maxlength="10" required />
     </div>
 
     <div class="form-group">
         <label for="collegeName">College Name</label>
         <input type="text" class="form-control" id="collegeName" name="collegeName" placeholder="Enter college name" required />
     </div>
+
+    <input type="hidden" id="originalCollegeCode" name="originalCollegeCode" />
 
     <input type="hidden" id="action" name="action" value="add" />
 
@@ -55,6 +57,7 @@
         document.getElementById("collegeForm").style.display = "block";  
         document.getElementById("collegeTable").style.display = "none";
         document.getElementById("showFormBtn").style.display = "none";
+        document.getElementById("colListTable").style.display = "none";
         document.getElementById("formTitle").innerText = "New College"; 
         document.getElementById("action").value = "add"; 
     }
@@ -63,12 +66,14 @@
         document.getElementById("collegeForm").style.display = "block";  
         document.getElementById("collegeTable").style.display = "none";
         document.getElementById("showFormBtn").style.display = "none";
+        document.getElementById("colListTable").style.display = "none";
 
         document.getElementById("collegeCode").value = code;
-        document.getElementById("collegeCode").readOnly = true;  
+        document.getElementById("collegeCode").readOnly = false;  
         document.getElementById("collegeName").value = name;
         document.getElementById("formTitle").innerText = "Edit College"; 
-        document.getElementById("action").value = "edit";  
+        document.getElementById("action").value = "edit";
+        document.getElementById("originalCollegeCode").value = code;  
     }
 
     function cancelForm() {
