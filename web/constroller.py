@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
 import mysql.connector
+import cloudinary.uploader
 
 views = Blueprint('views', __name__)
 
@@ -7,6 +8,7 @@ views = Blueprint('views', __name__)
 def students():
     if request.method == 'POST':
         # Retrieve form data
+        image = request.files.get('image')
         student_id = request.form.get('id')
         firstName = request.form.get('firstname')
         lastName = request.form.get('lastname')
@@ -33,22 +35,28 @@ def students():
                 )
                 cursor = connection.cursor()
 
+                # Handle Image Upload with Cloudinary
+                image_url = None
+                if image:
+                    upload_result = cloudinary.uploader.upload(image)
+                    image_url = upload_result.get("url")  # Get the uploaded image URL
+
                 if action == "add":
                     cursor.execute("SELECT * FROM student WHERE id = %s", (student_id,))
                     existing_student = cursor.fetchone()
                     if existing_student:
                         flash('Student ID already exists. Please use a different ID.', category='error')
                     else:
-                        query = """INSERT INTO student (id, firstname, lastname, year, gender, course) 
-                            VALUES (%s, %s, %s, %s, %s, %s)"""
-                        cursor.execute(query, (student_id, firstName, lastName, yearLevel, gender, course))
+                        query = """INSERT INTO student (image_url, id, firstname, lastname, year, gender, course) 
+                            VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+                        cursor.execute(query, (image_url, student_id, firstName, lastName, yearLevel, gender, course))
                         flash('Student added successfully.', category='success')
 
                 elif action == "edit":
                     query = """UPDATE student 
-                               SET firstname = %s, lastname = %s, year = %s, gender = %s, course = %s 
+                               SET image_url = %s, firstname = %s, lastname = %s, year = %s, gender = %s, course = %s 
                                WHERE id = %s"""
-                    cursor.execute(query, (firstName, lastName, yearLevel, gender, course, student_id))
+                    cursor.execute(query, (image_url, firstName, lastName, yearLevel, gender, course, student_id))
                     flash('Student updated successfully.', category='success')
 
                 connection.commit()
