@@ -35,7 +35,7 @@ def index():
     per_page = 10  # Number of students per page
 
     students, total_students = Student.get_all(search_query, filter_course, page, per_page)
-    total_pages = (total_students + per_page - 1)
+    total_pages = ceil(total_students / per_page)
 
     return render_template(
         'students.html',
