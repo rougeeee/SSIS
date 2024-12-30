@@ -1,17 +1,9 @@
 from flask import Flask
-import mysql.connector
+from dotenv import load_dotenv
+from config import Config
 
 def create_app():
+    load_dotenv()
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'happy'
-
-    app.config['MYSQL_HOST'] = 'localhost'
-    app.config['MYSQL_USER'] = 'root'
-    app.config['MYSQL_PASSWORD'] = 'maglasang'
-    app.config['MYSQL_DB'] = 'ssis'
-
-    from .constroller import views
-
-    app.register_blueprint(views, url_prefix='/')
-
+    app.config.from_object(Config)
     return app

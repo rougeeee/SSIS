@@ -3,6 +3,17 @@
 
 {% block content %}
 <h3 id="colListTable" align="center">Colleges List</h3>
+</br>
+<div id="collegeSearch" class="row mb-2">
+    <form method="GET" action="{{ url_for('colleges.index') }}" class="form-inline mb-3">
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="searchQuery" class="sr-only">Search</label>
+            <input type="text" class="form-control" id="searchQuery" name="searchQuery" placeholder="Search by Code or Name" value="{{ request.args.get('searchQuery', '') }}">
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Search</button>
+        <button type="button" class="btn btn-secondary mb-2" onclick="clearSearch()">Clear</button>
+    </form>
+</div>
 <table id="collegeTable" class="table">
     <thead>
         <tr>
@@ -18,10 +29,13 @@
             <td>{{ college.name }}</td>
             <td>
                 <button class="btn btn-outline-success" onclick="editCollege('{{ college.code }}', '{{ college.name }}')">Update</button>
-                <form action="{{ url_for('views.delete_college', college_code=college.code) }}" method="POST" style="display:inline;">
-                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure?');">Delete</button>
-                </form>
+                <a href="{{ url_for('colleges.index', action='delete', college_code=college.code) }}" 
+                   class="btn btn-outline-danger" 
+                   onclick="return confirm('Are you sure you want to delete this college?');">
+                   Delete
+                </a>
             </td>
+            
         </tr>
         {% endfor %}
     </tbody>
@@ -30,12 +44,12 @@
 <br/>
 <button id="showFormBtn" class="btn btn-success" onclick="showForm()">Add New College</button>
 
-<form id="collegeForm" method="POST" action="{{ url_for('views.college') }}" style="display: none; margin-top: 20px;">
+<form id="collegeForm" method="POST" action="{{ url_for('colleges.index') }}" style="display: none; margin-top: 20px;">
     <h3 align="center" id="formTitle">New College</h3>
 
     <div class="form-group">
         <label for="collegeCode">College Code</label>
-        <input type="text" class="form-control" id="collegeCode" name="collegeCode" placeholder="Enter college code" required maxlength="10" required />
+        <input type="text" class="form-control" id="collegeCode" name="collegeCode" placeholder="Enter college code" required maxlength="10" />
     </div>
 
     <div class="form-group">
@@ -44,7 +58,6 @@
     </div>
 
     <input type="hidden" id="originalCollegeCode" name="originalCollegeCode" />
-
     <input type="hidden" id="action" name="action" value="add" />
 
     <br/>
@@ -60,6 +73,7 @@
         document.getElementById("colListTable").style.display = "none";
         document.getElementById("formTitle").innerText = "New College"; 
         document.getElementById("action").value = "add"; 
+        document.getElementById("collegeSearch").style.display = "none";
     }
 
     function editCollege(code, name) {
@@ -67,10 +81,12 @@
         document.getElementById("collegeTable").style.display = "none";
         document.getElementById("showFormBtn").style.display = "none";
         document.getElementById("colListTable").style.display = "none";
+        document.getElementById("collegeSearch").style.display = "none";
 
         document.getElementById("collegeCode").value = code;
         document.getElementById("collegeCode").readOnly = false;  
         document.getElementById("collegeName").value = name;
+
         document.getElementById("formTitle").innerText = "Edit College"; 
         document.getElementById("action").value = "edit";
         document.getElementById("originalCollegeCode").value = code;  
@@ -81,7 +97,12 @@
         document.getElementById("collegeForm").style.display = "none";   
         document.getElementById("collegeTable").style.display = "table";
         document.getElementById("showFormBtn").style.display = "block";  
-        document.getElementById("collegeCode").readOnly = false;  
+        document.getElementById("collegeCode").readOnly = false;
+        document.getElementById("collegeSearch").style.display = "flex";
+        document.getElementById("colListTable").style.display = "block";    
+    }
+    function clearSearch() {
+        window.location.href = "{{ url_for('colleges.index') }}";
     }
 </script>
 {% endblock %}

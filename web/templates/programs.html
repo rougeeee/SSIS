@@ -3,6 +3,17 @@
 {% block content %}
 
 <h3 id="progListTitle" align="center">Programs List</h3>
+</br>
+<div id="programSearch" class="row mb-2">
+    <form method="GET" action="{{ url_for('programs.index') }}" class="form-inline mb-3">
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="searchQuery" class="sr-only">Search</label>
+            <input type="text" class="form-control" id="searchQuery" name="searchQuery" placeholder="Search by Code or Name" value="{{ request.args.get('searchQuery', '') }}">
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Search</button>
+        <button type="button" class="btn btn-secondary mb-2" onclick="clearSearch()">Clear</button>
+    </form>
+</div>
 <table id="programTable" class="table">
     <thead>
         <tr>
@@ -20,8 +31,9 @@
             <td>{{ program.college_code }}</td>
             <td>
                 <button class="btn btn-outline-success" onclick="editProgram('{{ program.code }}', '{{ program.name }}', '{{ program.college_code }}')">Update</button>
-                <form action="{{ url_for('views.delete_program', course_code=program.code) }}" method="POST" style="display:inline;">
-                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure?');">Delete</button>
+                <form action="{{ url_for('programs.index', course_code=program.code) }}" method="POST" style="display:inline;">
+                    <input type="hidden" name="action" value="delete">
+                    <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete this program?');">Delete</button>
                 </form>
             </td>
         </tr>
@@ -32,7 +44,7 @@
 <br/>
 <button id="showFormBtn" class="btn btn-success" onclick="showForm()">Add New Program</button>
 
-<form id="programForm" method="POST" action="{{ url_for('views.programs') }}" style="display: none; margin-top: 20px;">
+<form id="programForm" method="POST" action="{{ url_for('programs.index') }}" style="display: none; margin-top: 20px;">
     <h3 align="center" id="formTitle">New Program</h3>
 
     <div class="form-group">
@@ -67,6 +79,7 @@
         document.getElementById("formTitle").innerText = "New Program"; 
         document.getElementById("action").value = "add"; 
         document.getElementById("progListTitle").style.display = "none";
+        document.getElementById("programSearch").style.display = "none";  
     }
 
     function editProgram(code, name, collegeCode) {
@@ -74,6 +87,7 @@
         document.getElementById("programTable").style.display = "none";
         document.getElementById("showFormBtn").style.display = "none";
         document.getElementById("progListTitle").style.display = "none";
+        document.getElementById("programSearch").style.display = "none";  
 
         document.getElementById("courseCode").value = code;
         document.getElementById("courseCode").readOnly = false;  
@@ -90,7 +104,12 @@
         document.getElementById("programForm").style.display = "none";   
         document.getElementById("programTable").style.display = "table";
         document.getElementById("showFormBtn").style.display = "block";  
-        document.getElementById("courseCode").readOnly = false;  
+        document.getElementById("courseCode").readOnly = false;
+        document.getElementById("programSearch").style.display = "flex";
+        document.getElementById("progListTitle").style.display = "block";    
+    }
+    function clearSearch() {
+        window.location.href = "{{ url_for('programs.index') }}";
     }
 </script>
 
