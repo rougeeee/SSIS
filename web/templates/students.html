@@ -240,20 +240,22 @@
 
         const rows = document.querySelectorAll("#studentTable tbody tr");
         rows.forEach(row => {
-            const name = (row.children[1].textContent + " " + row.children[2].textContent).toLowerCase();
-            const course = row.children[5].textContent; 
-            const year = row.children[3].textContent; 
-            const gender = row.children[4].textContent; 
+            const id = row.children[1].textContent.toLowerCase();
+            const firstName = row.children[2].textContent.toLowerCase();
+            const lastName = row.children[3].textContent.toLowerCase();
+            const year = row.children[4].textContent.trim();
+            const gender = row.children[5].textContent.trim();
+            const course = row.children[6].textContent.trim();
 
-            if (
-                name.includes(searchValue) &&
-                (filterCourse === "" || course === filterCourse) && 
-                (filterYear === "" || year === filterYear) &&
-                (filterGender === "" || gender === filterGender)
-            ) {
-                row.style.display = ""; 
+            const matchesSearch = (id + " " + firstName + " " + lastName).includes(searchValue);
+            const matchesCourse = filterCourse === "" || course === filterCourse;
+            const matchesYear = filterYear === "" || year === filterYear;
+            const matchesGender = filterGender === "" || gender === filterGender;
+
+            if (matchesSearch && matchesCourse && matchesYear && matchesGender) {
+                row.style.display = "";
             } else {
-                row.style.display = "none"; 
+                row.style.display = "none";
             }
         });
     }
