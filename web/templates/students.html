@@ -116,7 +116,12 @@
 
     <div class="form-group">
         <label for="program">Course Code</label>
-        <input type="text" class="form-control" id="program" name="course" placeholder="e.g. BSCS" />
+        <select class="form-control" id="program" name="course" required>
+            <option value="" disabled selected>Select Course</option>
+            {% for program in programs %}
+                <option value="{{ program.code }}">{{ program.code }} - {{ program.name }}</option>
+            {% endfor %}
+        </select>
     </div>
 
     <br/>

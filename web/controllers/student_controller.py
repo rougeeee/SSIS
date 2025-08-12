@@ -34,7 +34,16 @@ def index():
     per_page = 10  # Number of students per page
 
     students, total_students = Student.get_all(search_query, filter_course, page, per_page)
-    total_pages = (total_students + per_page - 1)
+    total_pages = ceil(total_students / per_page)
+
+    if total_pages == 0:
+        total_pages = 1  # Ensure at least one page even if no data
+
+    if page < 1:
+        page = 1
+    elif page > total_pages:
+        page = total_pages
+
 
     return render_template(
         'students.html',
