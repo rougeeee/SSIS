@@ -45,8 +45,9 @@ class Student:
         image_url = None
         if 'image' in data:
             image = data['image']
-            result = cloudinary.uploader.upload(image)
-            image_url = result['secure_url']
+            if image and image.filename != "":
+                result = cloudinary.uploader.upload(image)
+                image_url = result['secure_url']
 
         connection = mysql.connector.connect(
             host=current_app.config['MYSQL_HOST'],

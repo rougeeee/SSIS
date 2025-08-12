@@ -51,7 +51,7 @@
             <th>Last Name</th>
             <th>Year</th>
             <th>Gender</th>
-            <th>Course</th>
+            <th>Course (College)</th>
             <th>Actions</th> 
         </tr>
     </thead>
@@ -68,7 +68,15 @@
             <td>{{ student.lastname }}</td>
             <td>{{ student.year }}</td>
             <td>{{ student.gender }}</td>
-            <td>{{ student.course }}</td>
+            <td>{{ student.course }}
+                (
+                {% for program in programs %}
+                    {% if program.code == student.course %}
+                        {{ program.college_code }}
+                    {% endif %}
+                {% endfor %}
+                )
+            </td>
             <td>
                 <button class="btn btn-outline-success" onclick="updateStudent('{{ student.id }}', '{{ student.firstname }}', '{{ student.lastname }}', '{{ student.year }}', '{{ student.gender }}', '{{ student.course }}')">Update</button>
                 <form action="{{ url_for('students.delete', student_id=student.id) }}" method="POST" style="display: inline;">
@@ -264,5 +272,14 @@
             }
         });
     }
+    document.getElementById("image").addEventListener("change", function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const maxSize = 2 * 1024 * 1024; 
+            if (file.size > maxSize) {
+                alert("Warning: The photo size is larger than 2MB. It will still be uploaded.");
+            }
+        }
+    });
 </script>
 {% endblock %}
