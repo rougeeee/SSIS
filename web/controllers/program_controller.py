@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from web.models.program import Program
+from web.models.college import College
 
 program_bp = Blueprint('programs', __name__)
 
@@ -33,4 +34,6 @@ def index():
 
     search_query = request.args.get('searchQuery', '').strip()
     programs = Program.get_all(search_query)
-    return render_template('programs.html', programs=programs)
+    colleges = College.get_all() 
+
+    return render_template('programs.html', programs=programs, colleges=colleges)
