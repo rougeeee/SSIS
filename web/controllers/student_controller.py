@@ -31,11 +31,19 @@ def index():
     search_query = request.args.get('searchQuery', '').strip()
     filter_course = request.args.get('filterCourse', '').strip()
 
-    page = request.args.get('page', 1, type=int)  # Default to page 1
-    per_page = 10  # Number of students per page
+    page = request.args.get('page', 1, type=int)  
+    per_page = 10  
 
     students, total_students = Student.get_all(search_query, filter_course, page, per_page)
     total_pages = ceil(total_students / per_page)
+
+    if total_pages == 0:
+        total_pages = 1  
+
+    if page < 1:
+        page = 1
+    elif page > total_pages:
+        page = total_pages
 
     return render_template(
         'students.html',
