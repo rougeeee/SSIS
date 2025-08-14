@@ -1,19 +1,14 @@
-from flask import current_app
-import mysql.connector
+from db import get_connection
 
 class College:
     @staticmethod
     def get_all(search_query=None):
-        connection = mysql.connector.connect(
-            host=current_app.config['MYSQL_HOST'],
-            user=current_app.config['MYSQL_USER'],
-            password=current_app.config['MYSQL_PASSWORD'],
-            database=current_app.config['MYSQL_DB']
-        )
+        connection = get_connection()
         cursor = connection.cursor(dictionary=True)
 
         query = "SELECT * FROM college"
         params = []
+
         if search_query:
             query += " WHERE code LIKE %s OR name LIKE %s"
             like_query = f"%{search_query}%"
@@ -27,12 +22,7 @@ class College:
 
     @staticmethod
     def add(data):
-        connection = mysql.connector.connect(
-            host=current_app.config['MYSQL_HOST'],
-            user=current_app.config['MYSQL_USER'],
-            password=current_app.config['MYSQL_PASSWORD'],
-            database=current_app.config['MYSQL_DB']
-        )
+        connection = get_connection()
         cursor = connection.cursor()
         query = "INSERT INTO college (code, name) VALUES (%s, %s)"
         cursor.execute(query, (data['code'], data['name']))
@@ -42,12 +32,7 @@ class College:
 
     @staticmethod
     def delete(college_code):
-        connection = mysql.connector.connect(
-            host=current_app.config['MYSQL_HOST'],
-            user=current_app.config['MYSQL_USER'],
-            password=current_app.config['MYSQL_PASSWORD'],
-            database=current_app.config['MYSQL_DB']
-        )
+        connection = get_connection()
         cursor = connection.cursor()
         cursor.execute("DELETE FROM college WHERE code = %s", (college_code,))
         connection.commit()
@@ -56,12 +41,7 @@ class College:
 
     @staticmethod
     def update(original_code, data):
-        connection = mysql.connector.connect(
-            host=current_app.config['MYSQL_HOST'],
-            user=current_app.config['MYSQL_USER'],
-            password=current_app.config['MYSQL_PASSWORD'],
-            database=current_app.config['MYSQL_DB']
-        )
+        connection = get_connection()
         cursor = connection.cursor()
         query = """
             UPDATE college 

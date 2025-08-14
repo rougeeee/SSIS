@@ -45,14 +45,19 @@ def index():
     elif page > total_pages:
         page = total_pages
 
+    programs = Program.get_all()
+
+    program_college_map = {p['code']: p['college_name'] for p in programs}
+
     return render_template(
         'students.html',
         students=students,
-        programs=Program.get_all(),
+        programs=programs,
         search_query=search_query,
         filter_course=filter_course,
         page=page,
-        total_pages=total_pages
+        total_pages=total_pages,
+        program_college_map=program_college_map
     )
 
 @student_bp.route('/delete/<string:student_id>', methods=['POST'])

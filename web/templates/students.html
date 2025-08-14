@@ -68,15 +68,10 @@
             <td>{{ student.lastname }}</td>
             <td>{{ student.year }}</td>
             <td>{{ student.gender }}</td>
-            <td>{{ student.course }}
-                (
-                {% for program in programs %}
-                    {% if program.code == student.course %}
-                        {{ program.college_code }}
-                    {% endif %}
-                {% endfor %}
-                )
+            <td data-course="{{ student.course }}" data-college="{{ program_college_map.get(student.course, '') }}">
+            {{ student.course }} ({{ program_college_map.get(student.course, 'Unknown College') }})
             </td>
+
             <td>
                 <button class="btn btn-outline-success" onclick="updateStudent('{{ student.id }}', '{{ student.firstname }}', '{{ student.lastname }}', '{{ student.year }}', '{{ student.gender }}', '{{ student.course }}')">Update</button>
                 <form action="{{ url_for('students.delete', student_id=student.id) }}" method="POST" style="display: inline;">
@@ -247,31 +242,40 @@
     }
     function filterTable() {
         const searchValue = document.getElementById("searchQuery").value.toLowerCase();
-        const filterCourse = document.getElementById("filterCourse").value;
+        const filterCourse = document.getElementById("filterCourse").value.toLowerCase();
         const filterYear = document.getElementById("filterYear").value;
-        const filterGender = document.getElementById("filterGender").value;
+        const filterGender = document.getElementById("filterGender").value.toLowerCase();
 
         const rows = document.querySelectorAll("#studentTable tbody tr");
         rows.forEach(row => {
-            const id = row.children[1].textContent.toLowerCase();
-            const firstName = row.children[2].textContent.toLowerCase();
-            const lastName = row.children[3].textContent.toLowerCase();
+            const id = row.children[1].textContent.toLowerCase().trim();
+            const firstName = row.children[2].textContent.toLowerCase().trim();
+            const lastName = row.children[3].textContent.toLowerCase().trim();
             const year = row.children[4].textContent.trim();
-            const gender = row.children[5].textContent.trim();
-            const course = row.children[6].textContent.trim();
+            const gender = row.children[5].textContent.trim().toLowerCase();
 
-            const matchesSearch = (id + " " + firstName + " " + lastName).includes(searchValue);
-            const matchesCourse = filterCourse === "" || course === filterCourse;
+            // Full course + college column
+            let courseAndCollege = row.children[6].textContent.toLowerCase().trim();
+
+            // Remove parentheses and normalize spaces
+            courseAndCollege = courseAndCollege.replace(/[()]/g, '').replace(/\s+/g, ' ');
+
+            const matchesSearch = (
+                id.includes(searchValue) ||
+                firstName.includes(searchValue) ||
+                lastName.includes(searchValue) ||
+                courseAndCollege.includes(searchValue.trim())
+            );
+
+            const courseCode = row.children[6].getAttribute("data-course").toLowerCase();
+            const matchesCourse = filterCourse === "" || courseCode === filterCourse;
             const matchesYear = filterYear === "" || year === filterYear;
             const matchesGender = filterGender === "" || gender === filterGender;
 
-            if (matchesSearch && matchesCourse && matchesYear && matchesGender) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
+            row.style.display = (matchesSearch && matchesCourse && matchesYear && matchesGender) ? "" : "none";
         });
     }
+
     document.getElementById("image").addEventListener("change", function(event) {
         const file = event.target.files[0];
         if (file) {

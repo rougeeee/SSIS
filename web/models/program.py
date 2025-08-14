@@ -1,23 +1,25 @@
-from flask import current_app
-import mysql.connector
+from db import get_connection
 
 class Program:
     @staticmethod
     def get_all(search_query=None):
-        connection = mysql.connector.connect(
-            host=current_app.config['MYSQL_HOST'],
-            user=current_app.config['MYSQL_USER'],
-            password=current_app.config['MYSQL_PASSWORD'],
-            database=current_app.config['MYSQL_DB']
-        )
+        connection = get_connection()
         cursor = connection.cursor(dictionary=True)
 
-        query = "SELECT * FROM program"
+        query = """
+            SELECT p.code, p.name, p.college_code, c.name AS college_name
+            FROM program p
+            LEFT JOIN college c ON p.college_code = c.code
+        """
         params = []
+
         if search_query:
-            query += " WHERE code LIKE %s OR name LIKE %s OR college_code LIKE %s"
+            query += """
+                WHERE p.code LIKE %s OR p.name LIKE %s 
+                OR p.college_code LIKE %s OR c.name LIKE %s
+            """
             like_query = f"%{search_query}%"
-            params.extend([like_query, like_query, like_query])
+            params.extend([like_query, like_query, like_query, like_query])
 
         cursor.execute(query, params)
         programs = cursor.fetchall()
@@ -27,12 +29,7 @@ class Program:
 
     @staticmethod
     def add(data):
-        connection = mysql.connector.connect(
-            host=current_app.config['MYSQL_HOST'],
-            user=current_app.config['MYSQL_USER'],
-            password=current_app.config['MYSQL_PASSWORD'],
-            database=current_app.config['MYSQL_DB']
-        )
+        connection = get_connection()
         cursor = connection.cursor()
         query = "INSERT INTO program (code, name, college_code) VALUES (%s, %s, %s)"
         cursor.execute(query, (data['code'], data['name'], data['college_code']))
@@ -42,12 +39,7 @@ class Program:
 
     @staticmethod
     def delete(course_code):
-        connection = mysql.connector.connect(
-            host=current_app.config['MYSQL_HOST'],
-            user=current_app.config['MYSQL_USER'],
-            password=current_app.config['MYSQL_PASSWORD'],
-            database=current_app.config['MYSQL_DB']
-        )
+        connection = get_connection()
         cursor = connection.cursor()
         cursor.execute("DELETE FROM program WHERE code = %s", (course_code,))
         connection.commit()
@@ -56,12 +48,7 @@ class Program:
     
     @staticmethod
     def edit(data, original_code):
-        connection = mysql.connector.connect(
-            host=current_app.config['MYSQL_HOST'],
-            user=current_app.config['MYSQL_USER'],
-            password=current_app.config['MYSQL_PASSWORD'],
-            database=current_app.config['MYSQL_DB']
-        )
+        connection = get_connection()
         cursor = connection.cursor()
         query = """
             UPDATE program 

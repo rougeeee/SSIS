@@ -8,7 +8,7 @@ CREATE TABLE program (
     name VARCHAR(100) NOT NULL,
     college_code VARCHAR(10),
     FOREIGN KEY (college_code) REFERENCES college(code)
-    ON DELETE CASCADE
+    ON DELETE SET NULL
     ON UPDATE CASCADE
 );
 
